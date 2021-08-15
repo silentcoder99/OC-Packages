@@ -53,3 +53,5 @@ function Network.listen(port)
     end
   end
 end
+
+return Network
