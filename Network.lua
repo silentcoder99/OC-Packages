@@ -42,13 +42,16 @@ function Network.listen(port)
   print(string.format("Listening for packets on port %d...", port))
 
   while true do
-    local _, _, _, _, _, message = event.pull("modem_message")
+    local _, _, _, _, distance, message = event.pull("modem_message")
+
 
     if string.len(message) > 20 then
       message = string.sub(message, 1, 20)
     end
 
-    print("Package", message)
+    if distance == 0 then
+      print("Package", message)
+    end
 
     if message == "end" then
       break
