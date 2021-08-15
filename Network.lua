@@ -1,4 +1,5 @@
 local component = require("component")
+local event = require("event")
 local modem = component.modem
 
 local startPacket = "start"
