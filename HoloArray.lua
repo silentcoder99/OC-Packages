@@ -29,7 +29,13 @@ function HoloArray:getResolution()
     return self.size * holoResolution
 end
  
-function HoloArray:setProjectors(addresses)
+function HoloArray:setProjectors(filename)
+    local addresses = {}
+
+    for address in io.lines(filename) do
+        table.insert(addresses, address)
+    end
+
     local i = 1
     for y = 1, self.size.y do
         for z = 1, self.size.z do
