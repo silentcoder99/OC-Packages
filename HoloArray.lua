@@ -88,6 +88,26 @@ function HoloArray:set(x, y, z, value)
     
     projector.set(localPos.x, localPos.y, localPos.z, value)
 end
+
+function HoloArray:showMap(map, colorFunc)
+    local pos = map.minBlock
+    local size = map:getSize()
+    local resolution = self:getResolution()
+
+    local offset = ((resolution - size) / Vec3:new(2, 2, 2)):map(math.floor) + Vec3:new(1, 1, 1) - pos
+
+    for x = pos.x, pos.x + size.x - 1 do
+        for y = pos.y, pos.y + size.y - 1 do
+            for z = pos.z, pos.z + size.z - 1 do
+                local block = map:getBlock(Vec3:new(x, y, z))
+                local holoPos = Vec3:new(x, y, z) + offset
+
+                local colorIndex = colorFunc(block)
+                self:set(holoPos.x, holoPos.y, holoPos.z, colorIndex)
+            end
+        end
+    end
+end
  
 -- Invoke a function on all projectors
 function HoloArray:invoke(funcName, ...)
