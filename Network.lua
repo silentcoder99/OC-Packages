@@ -18,7 +18,7 @@ function Network.splitString(str)
   local tail = string.sub(str, strPacketSize + 1, length)
 
   local packets = {head}
-  for packet in Network.splitString(tail) do
+  for _, packet in pairs(Network.splitString(tail)) do
     table.insert(packets, packet)
   end
 
@@ -29,7 +29,7 @@ function Network.broadcastString(port, str)
   modem.broadcast(port, startPacket)
 
   local strPackets = Network.splitString(str) 
-  for packet in strPackets do
+  for _, packet in pairs(strPackets) do
     modem.broadcast(port, packet)
   end
 
