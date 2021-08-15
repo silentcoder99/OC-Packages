@@ -38,6 +38,7 @@ function Network.broadcastString(port, str)
 end
 
 function Network.listen(port)
+  modem.open(port)
   print(string.format("Listening for packets on port %d...", port))
 
   while true do
@@ -53,6 +54,8 @@ function Network.listen(port)
       break
     end
   end
+
+  modem.close(port)
 end
 
 return Network
