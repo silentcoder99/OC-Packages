@@ -2,7 +2,6 @@ local component = require("component")
 local event = require("event")
 local modem = component.modem
 
-local startPacket = "start"
 local endPacket = "end"
 local strPacketSize = 8000
 
@@ -27,15 +26,35 @@ function Network.splitString(str)
 end
 
 function Network.broadcastString(port, str)
-  modem.broadcast(port, startPacket)
-
   local strPackets = Network.splitString(str) 
+
   for _, packet in pairs(strPackets) do
     modem.broadcast(port, packet)
   end
 
   modem.broadcast(port, endPacket)
 end
+
+function Network.pullString(port)
+  local str = ""
+
+  modem.open(port)
+  
+  while true do
+    local _, _, _, _, distance, message = event.pull("modem_message")
+
+    if distance == 0 then
+      if message == "end" then
+        break
+      end
+
+      str = str .. message
+    end
+  end
+
+  return str
+end
+
 
 function Network.listen(port)
   modem.open(port)
