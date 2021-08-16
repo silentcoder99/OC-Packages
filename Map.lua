@@ -3,7 +3,9 @@ local component = require("component")
 local geo = component.geolyzer
 
 Map = {}
-function Map:new(chunkSize, filePath, obj)
+Map.__index = Map
+
+function Map:new(chunkSize, filePath)
   local newObj = {
     chunkSize = chunkSize,
     filePath = filePath,
@@ -16,7 +18,6 @@ function Map:new(chunkSize, filePath, obj)
   local obj = obj or newObj
 
   setmetatable(obj, self)
-  self.__index = self
   return obj
 end
 
