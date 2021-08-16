@@ -1,4 +1,6 @@
 Vec3 = {}
+Vec3.__index = Vec3
+
 function Vec3:new(x, y, z)
   local obj = {
     x = x,
@@ -6,7 +8,6 @@ function Vec3:new(x, y, z)
     z = z
   }
   setmetatable(obj, self)
-  self.__index = self
   return obj
 end
 
