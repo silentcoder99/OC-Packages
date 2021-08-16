@@ -69,6 +69,8 @@ function Map:scanRawChunk(chunkPos)
 end
 
 function Map:scanChunk(chunkPos)
+  self:initializeChunk(chunkPos)
+
   local pos = self:toWorldSpace(chunkPos)
   local size = self.chunkSize
   local chunkStr = tostring(chunkPos)
@@ -78,8 +80,6 @@ function Map:scanChunk(chunkPos)
   if scanData == nil then
     return nil
   end
-
-  self:initializeChunk(chunkPos)
 
   local solidBlocks = 0
   local i = 1
