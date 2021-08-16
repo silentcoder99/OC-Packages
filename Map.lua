@@ -1,6 +1,4 @@
 local Vec3 = require("Vec3")
-local component = require("component")
-local geo = component.geolyzer
 
 Map = {}
 Map.__index = Map
@@ -58,11 +56,11 @@ function Map:initializeChunk(chunkPos)
   self.chunks[tostring(chunkPos)] = newChunk
 end
 
-function Map:scanRawChunk(chunkPos)
+function Map:scanRawChunk(chunkPos, geolyzer)
   local pos = self:toWorldSpace(chunkPos)
   local size = self.chunkSize
 
-  local success, result = pcall(geo.scan, pos.x, pos.z, pos.y, size.x, size.z, size.y)
+  local success, result = pcall(geolyzer.scan, pos.x, pos.z, pos.y, size.x, size.z, size.y)
 
   if success then
     return result
@@ -72,7 +70,7 @@ function Map:scanRawChunk(chunkPos)
   return nil
 end
 
-function Map:scanChunk(chunkPos)
+function Map:scanChunk(chunkPos, geolyzer)
   self:initializeChunk(chunkPos)
 
   local pos = self:toWorldSpace(chunkPos)
@@ -80,7 +78,7 @@ function Map:scanChunk(chunkPos)
   local chunkStr = tostring(chunkPos)
   local chunk = self.chunks[chunkStr]
 
-  local scanData = self:scanRawChunk(chunkPos)
+  local scanData = self:scanRawChunk(chunkPos, geolyzer)
   if scanData == nil then
     return nil
   end
@@ -116,7 +114,7 @@ function Map:scanChunk(chunkPos)
   return solidBlocks
 end
 
-function Map:scanArea(pos, size)
+function Map:scanArea(pos, size, geolyzer)
   local minChunk = self:toChunkSpace(pos)
   local maxPos = pos + size + Vec3:new(-1, -1, -1)
   local maxChunk = self:toChunkSpace(maxPos)
@@ -125,7 +123,7 @@ function Map:scanArea(pos, size)
     for y = minChunk.y, maxChunk.y do
       for z = minChunk.z, maxChunk.z do
         local chunkPos = Vec3:new(x, y, z)
-        self:scanChunk(chunkPos)
+        self:scanChunk(chunkPos, geolyzer)
       end
     end
   end
@@ -144,7 +142,7 @@ function Map:adjacentChunks(chunkPos)
 end
 
 -- Scans all blocks connected to the geolyzer
-function Map:scanAll(chunkPos, scannedChunks)
+function Map:scanAll(geolyzer, chunkPos, scannedChunks)
   local chunkPos = chunkPos or Vec3:new(0, 0, 0)
   local scannedChunks = scannedChunks or {}
 
@@ -152,13 +150,13 @@ function Map:scanAll(chunkPos, scannedChunks)
     return
   end
 
-  local solidBlocks = self:scanChunk(chunkPos)
+  local solidBlocks = self:scanChunk(chunkPos, geolyzer)
   scannedChunks[tostring(chunkPos)] = true
 
   if solidBlocks ~= nil and solidBlocks > 0 then
     local neighbours = self:adjacentChunks(chunkPos)
     for _, neighbour in pairs(neighbours) do
-      self:scanAll(neighbour, scannedChunks)
+      self:scanAll(geolyzer, neighbour, scannedChunks)
     end
   end
 end
