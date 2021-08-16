@@ -3,8 +3,8 @@ local component = require("component")
 local geo = component.geolyzer
 
 Map = {}
-function Map:new(chunkSize, filePath)
-  local obj = {
+function Map:new(chunkSize, filePath, obj)
+  local newObj = {
     chunkSize = chunkSize,
     filePath = filePath,
     chunks = {},
@@ -12,6 +12,9 @@ function Map:new(chunkSize, filePath)
     minBlock = Vec3:new(1000000, 1000000, 1000000),
     maxBlock = Vec3:new(-1000000, -1000000, -1000000)
   }
+
+  local obj = obj or newObj
+
   setmetatable(obj, self)
   self.__index = self
   return obj
