@@ -5,16 +5,13 @@ Map = {}
 Map.__index = Map
 
 function Map:new(chunkSize, filePath)
-  local newObj = {
+  local obj = {
     chunkSize = chunkSize,
     filePath = filePath,
-    chunks = {},
     numBlocks = 0,
     minBlock = Vec3:new(1000000, 1000000, 1000000),
     maxBlock = Vec3:new(-1000000, -1000000, -1000000)
   }
-
-  local obj = obj or newObj
 
   setmetatable(obj, self)
   return obj
@@ -48,10 +45,6 @@ function Map:toWorldSpace(chunkPos)
 end
 
 function Map:initializeChunk(chunkPos)
-  if self.chunks[tostring(chunkPos)] then
-    return
-  end
-
   local chunkSize = self.chunkSize
   local pos = self:toWorldSpace(chunkPos)
 
@@ -65,7 +58,7 @@ function Map:initializeChunk(chunkPos)
     end
   end
 
-  self.chunks[tostring(chunkPos)] = newChunk
+  return newChunk
 end
 
 function Map:scanRawChunk(chunkPos, geolyzer)
@@ -82,13 +75,25 @@ function Map:scanRawChunk(chunkPos, geolyzer)
   return nil
 end
 
+function Map:chunkFilePath(chunkPos)
+  return self.filePath .. "/" .. chunkPos.x .. "-" .. chunkPos.y .. "-" .. chunkPos.z
+end
+
+function Map:saveChunk(chunkPos, chunk)
+  local filePath = self:chunkFilePath(chunkPos)
+  local file = io.open(filePath, "w")
+
+  local chunkStr = serial.serialize(chunk)
+  file:write(chunkStr)
+  
+  file:close()
+end
+
 function Map:scanChunk(chunkPos, geolyzer)
-  self:initializeChunk(chunkPos)
+  local chunk = self:initializeChunk(chunkPos)
 
   local pos = self:toWorldSpace(chunkPos)
   local size = self.chunkSize
-  local chunkStr = tostring(chunkPos)
-  local chunk = self.chunks[chunkStr]
 
   local scanData = self:scanRawChunk(chunkPos, geolyzer)
   if scanData == nil then
@@ -123,6 +128,7 @@ function Map:scanChunk(chunkPos, geolyzer)
     end
   end
 
+  self:saveChunk(chunkPos, chunk)
   return solidBlocks
 end
 
