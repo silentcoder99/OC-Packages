@@ -175,7 +175,7 @@ end
 
 function Map:getBlock(pos)
   local chunkPos = self:toChunkSpace(pos)
-  local chunkStr = toString(chunkPos)
+  local chunkStr = tostring(chunkPos)
   local chunk = self.chunks[chunkStr]
 
   if not chunk then
