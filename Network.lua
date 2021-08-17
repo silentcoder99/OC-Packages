@@ -126,14 +126,16 @@ function Network.receiveDirectory(port, path)
     fs.makeDirectory(absolutePath)
   end
 
-  local filename = Network.pullString(port)
+  while true do
+    local filename = Network.pullString(port)
 
-  if filename == endPacket then
-    return
+    if filename == endPacket then
+      break
+    end
+
+    local filePath = fs.concat(path, filename)
+    Network.receiveFile(port, filePath)
   end
-
-  local filePath = fs.concat(path, filename)
-  Network.receiveFile(port, filePath)
 end
 
 return Network
