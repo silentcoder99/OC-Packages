@@ -80,4 +80,13 @@ function Network.listen(port)
   modem.close(port)
 end
 
+function Network.receiveFile(port, path)
+  local fileStr = Network.pullString(port)
+
+  local file = io.open(path, "w")
+  file:write(fileStr)
+  
+  file:close()
+end
+
 return Network
