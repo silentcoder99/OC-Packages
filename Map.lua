@@ -81,7 +81,12 @@ end
 
 function Map:saveChunk(chunkPos, chunk)
   local filePath = self:chunkFilePath(chunkPos)
-  local file = io.open(filePath, "w")
+  local file, ioError = io.open(filePath, "w")
+
+  if not file then
+    print("Error writing chunk file", ioError)
+    return
+  end
 
   local chunkStr = serial.serialize(chunk)
   file:write(chunkStr)
