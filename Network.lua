@@ -118,6 +118,13 @@ end
 
 function Network.receiveDirectory(port, path)
   local endPacket = "endDir"
+  
+  local scriptPath = shell.resolve(".")
+  local absolutePath = fs.concat(scriptPath, path)
+
+  if not fs.isDirectory(absolutePath) then
+    fs.makeDirectory(absolutePath)
+  end
 
   local filename = Network.pullString(port)
 
