@@ -1,6 +1,8 @@
 local component = require("component")
 local event = require("event")
 local modem = component.modem
+local fs = require("filesystem")
+local shell = require("shell")
 
 local endPacket = "end"
 local strPacketSize = 8000
@@ -96,6 +98,35 @@ function Network.receiveFile(port, path)
   file:write(fileStr)
   
   file:close()
+end
+
+function Network.sendDirectory(port, path)
+  local endPacket = "endDir"
+
+  local scriptPath = shell.resolve(".")
+  local absolutePath = fs.concat(scriptPath, path)
+
+  for filename in fs.list(absolutePath) do
+    local filePath = fs.concat(path, filename)
+
+    Network.broadcastString(port, filename)
+    Network.sendFile(port, filePath)
+  end
+
+  Network.broadcastString(port, endPacket)
+end
+
+function Network.receiveDirectory(port, path)
+  local endPacket = "endDir"
+
+  local filename = Network.pullString(port)
+
+  if filename == endPacket then
+    return
+  end
+
+  local filePath = fs.concat(path, filename)
+  Network.receiveFile(port, filePath)
 end
 
 return Network
