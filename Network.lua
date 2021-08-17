@@ -80,6 +80,15 @@ function Network.listen(port)
   modem.close(port)
 end
 
+function Network.sendFile(port, path)
+  local file = io.open(path, "r")
+  local fileStr = file:read("*all")
+
+  file:close()
+
+  Network.broadcastString(port, fileStr)
+end
+
 function Network.receiveFile(port, path)
   local fileStr = Network.pullString(port)
 
