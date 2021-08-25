@@ -13,7 +13,9 @@ function Map:new(chunkSize, filePath)
     filePath = filePath,
     numBlocks = 0,
     minBlock = Vec3:new(1000000, 1000000, 1000000),
-    maxBlock = Vec3:new(-1000000, -1000000, -1000000)
+    maxBlock = Vec3:new(-1000000, -1000000, -1000000),
+    cachedChunks = {},
+    cacheSize = 40
   }
 
   setmetatable(obj, self)
@@ -176,7 +178,7 @@ function Map:scanAll(geolyzer, chunkPos, scannedChunks)
   end
 end
 
-function Map:getChunk(chunkPos)
+function Map:loadChunk(chunkPos)
   local chunkPath = self:chunkFilePath(chunkPos)
   local file, ioError = io.open(chunkPath, "r")
 
@@ -189,6 +191,34 @@ function Map:getChunk(chunkPos)
   local chunk = serial.unserialize(chunkStr)
 
   file:close()
+
+  --Add chunk to cache
+  local cache = self.cachedChunks
+  local chunkStr = tostring(chunkPos)
+
+  table.insert(cache, 1, {chunkStr = chunk})
+  table[self.cacheSize + 1] = nil --Remove chunks outside of cache size
+
+  return chunk
+end
+
+function Map:getCachedChunk(chunkPos)
+  for i, cachedChunk in ipairs(self.cachedChunks) do
+    local chunkStr, chunk = next(cachedChunk)
+    if tostring(chunkPos) == chunkStr then
+      return chunk
+    end
+  end
+
+  return nil
+end
+
+function Map:getChunk(chunkPos)
+  local chunk = self:getCachedChunk(chunkPos)
+
+  if not chunk then
+    chunk = self:loadChunk(chunkPos)
+  end
 
   return chunk
 end
