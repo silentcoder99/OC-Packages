@@ -237,6 +237,29 @@ function Map:getBlock(pos)
   return chunk[pos.x][pos.y][pos.z]
 end
 
+function Map:listChunks()
+  local scriptPath = shell.resolve(".")
+  local absolutePath = fs.concat(scriptPath, self.filePath)
+
+  local chunkFileList = fs.list(absolutePath)
+
+  return function()
+    local chunkFilename = next(chunkFileList)
+
+    if not chunkFilename then
+      return nil
+    end
+
+    local file = io.open(chunkFilename, "r")
+    local chunkStr = file:read("*all")
+
+    file:close()
+
+    local chunk = serial.unserialize(chunkStr)
+    return chunk
+  end
+end
+
 function Map:getSize()
   return self.maxBlock - self.minBlock + Vec3:new(1, 1, 1)
 end
