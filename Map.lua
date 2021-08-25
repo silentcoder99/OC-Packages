@@ -251,7 +251,8 @@ function Map:listChunks()
       return nil
     end
 
-    local file = io.open(chunkFilename, "r")
+    local chunkPath = fs.concat(self.filePath, chunkFilename)
+    local file = io.open(chunkPath, "r")
     local chunkStr = file:read("*all")
 
     file:close()
