@@ -2,6 +2,8 @@ local Vec3 = require("Vec3")
 local serial = require("serialization")
 local fs = require("filesystem")
 
+local metadataFile = "metadata"
+
 Map = {}
 Map.__index = Map
 
@@ -237,6 +239,10 @@ function Map:loadMetadata()
   self.numBlocks = metadata.numBlocks
   self.minBlock = metadata.minBlock
   self.maxBlock = metadata.maxBlock
+    
+  setmetatable(self.chunkSize, Vec3)
+  setmetatable(self.minBlock, Vec3)
+  setmetatable(self.maxBlock, Vec3)
 end
 
 return Map
