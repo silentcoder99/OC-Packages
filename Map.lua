@@ -196,7 +196,10 @@ function Map:loadChunk(chunkPos)
   local cache = self.cachedChunks
   local chunkStr = tostring(chunkPos)
 
-  table.insert(cache, 1, {chunkStr = chunk})
+  local cachedChunk = {}
+  cachedChunk[chunkStr] = chunk
+
+  table.insert(cache, 1, cachedChunk)
   table[self.cacheSize + 1] = nil --Remove chunks outside of cache size
 
   return chunk
