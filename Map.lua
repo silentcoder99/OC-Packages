@@ -1,6 +1,7 @@
 local Vec3 = require("Vec3")
 local serial = require("serialization")
 local fs = require("filesystem")
+local shell = require("shell")
 
 local metadataFile = "metadata"
 
