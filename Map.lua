@@ -242,10 +242,10 @@ function Map:listChunks()
   local scriptPath = shell.resolve(".")
   local absolutePath = fs.concat(scriptPath, self.filePath)
 
-  local chunkFileList = fs.list(absolutePath)
+  local chunkFileIter = fs.list(absolutePath)
 
   return function()
-    local chunkFilename = next(chunkFileList)
+    local chunkFilename = chunkFileIter()
 
     if not chunkFilename then
       return nil
