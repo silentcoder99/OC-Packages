@@ -1,5 +1,6 @@
 local Vec3 = require("Vec3")
 local serial = require("serialization")
+local fs = require("filesystem")
 
 Map = {}
 Map.__index = Map
