@@ -18,17 +18,6 @@ function Map:new(chunkSize, filePath)
   return obj
 end
 
-function Map:unserialize(str)
-  local map = serial.unserialize(str)
-
-  setmetatable(map, self)
-  setmetatable(map.chunkSize, Vec3)
-  setmetatable(map.minBlock, Vec3)
-  setmetatable(map.maxBlock, Vec3)
-
-  return map
-end
-
 function Map:toChunkSpace(pos)
   return Vec3:new(
   math.floor(pos.x / self.chunkSize.x),
