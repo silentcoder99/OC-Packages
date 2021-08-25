@@ -196,6 +196,8 @@ function Map:getChunk(chunkPos)
   local chunkStr = file:read("*all")
   local chunk = serial.unserialize(chunkStr)
 
+  file:close()
+
   return chunk
 end
 
@@ -212,6 +214,39 @@ end
 
 function Map:getSize()
   return self.maxBlock - self.minBlock + Vec3:new(1, 1, 1)
+end
+
+function Map:saveMetadata()
+  local filePath = fs.concat(self.filePath, metadataFile)
+  local file, ioError = io.open(filePath, "w")
+
+  if not file then
+    print("Error writing metadata", ioError)
+    return
+  end
+
+  local metadataStr = serial.serialize(self)
+  file:write(metadataStr)
+
+  file:close()
+end
+
+function Map:loadMetadata()
+  local filePath = fs.concat(self.filePath, metadataFile)
+  local file, ioError = io.open(filePath, "r")
+
+  if not file then
+    print("Error reading metadata", ioError)
+    return
+  end
+
+  local metadataStr = file:read("*all")
+  local metadata = serial.unserialize(metadataStr)
+
+  self.chunkSize = metadata.chunkSize
+  self.numBlocks = metadata.numBlocks
+  self.minBlock = metadata.minBlock
+  self.maxBlock = metadata.maxBlock
 end
 
 return Map
