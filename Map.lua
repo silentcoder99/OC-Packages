@@ -184,10 +184,24 @@ function Map:scanAll(geolyzer, chunkPos, scannedChunks)
   end
 end
 
+function Map:getChunk(chunkPos)
+  local chunkPath = self:chunkFilePath(chunkPos)
+  local file, ioError = io.open(chunkPath, "r")
+
+  if not file then
+    print("Error reading chunk file", ioError)
+    return nil
+  end
+
+  local chunkStr = file:read("*all")
+  local chunk = serial.unserialize(chunkStr)
+
+  return chunk
+end
+
 function Map:getBlock(pos)
   local chunkPos = self:toChunkSpace(pos)
-  local chunkStr = tostring(chunkPos)
-  local chunk = self.chunks[chunkStr]
+  local chunk = self:getChunk(chunkPos)
 
   if not chunk then
     return nil
