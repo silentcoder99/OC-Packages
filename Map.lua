@@ -106,12 +106,18 @@ function Map:scanChunk(chunkPos, geolyzer, scanPos)
   for y = pos.y, pos.y + size.y - 1 do
     for z = pos.z, pos.z + size.z - 1 do
       for x = pos.x, pos.x + size.x - 1 do
-        chunk[x][y][z] = scanData[i]
+
+        local blockPos = Vec3:new(x, y, z)
+
+        -- Don't include the robot itself in the scan
+        if blockPos == scanPos then
+          chunk[x][y][z] = 0
+        else
+          chunk[x][y][z] = scanData[i]
+        end
 
         if scanData[i] ~= 0 and scanData[i] ~= nil then
           solidBlocks = solidBlocks + 1
-
-          local blockPos = Vec3:new(x, y, z)
 
           self.minBlock.x = math.min(blockPos.x, self.minBlock.x)
           self.minBlock.y = math.min(blockPos.y, self.minBlock.y)
