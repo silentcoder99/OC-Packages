@@ -56,8 +56,8 @@ function Map:initializeChunk(chunkPos)
   return newChunk
 end
 
-function Map:scanRawChunk(chunkPos, geolyzer)
-  local pos = self:toWorldSpace(chunkPos)
+function Map:scanRawChunk(chunkPos, geolyzer, scanPos)
+  local pos = self:toWorldSpace(chunkPos) - scanPos --Make pos relative to marker not the robot
   local size = self.chunkSize
 
   local success, result = pcall(geolyzer.scan, pos.x, pos.z, pos.y, size.x, size.z, size.y)
@@ -89,13 +89,13 @@ function Map:saveChunk(chunkPos, chunk)
   file:close()
 end
 
-function Map:scanChunk(chunkPos, geolyzer)
+function Map:scanChunk(chunkPos, geolyzer, scanPos)
   local chunk = self:initializeChunk(chunkPos)
 
   local pos = self:toWorldSpace(chunkPos)
   local size = self.chunkSize
 
-  local scanData = self:scanRawChunk(chunkPos, geolyzer)
+  local scanData = self:scanRawChunk(chunkPos, geolyzer, scanPos)
   if scanData == nil then
     return nil
   end
@@ -160,21 +160,21 @@ function Map:adjacentChunks(chunkPos)
 end
 
 -- Scans all blocks connected to the geolyzer
-function Map:scanAll(geolyzer, chunkPos, scannedChunks)
-  local chunkPos = chunkPos or Vec3:new(0, 0, 0)
+function Map:scanAll(geolyzer, scanPos, chunkPos, scannedChunks)
+  local chunkPos = chunkPos or self:toChunkSpace(scanPos)
   local scannedChunks = scannedChunks or {}
 
   if scannedChunks[tostring(chunkPos)] then
     return
   end
 
-  local solidBlocks = self:scanChunk(chunkPos, geolyzer)
+  local solidBlocks = self:scanChunk(chunkPos, geolyzer, scanPos)
   scannedChunks[tostring(chunkPos)] = true
 
   if solidBlocks ~= nil and solidBlocks > 0 then
     local neighbours = self:adjacentChunks(chunkPos)
     for _, neighbour in pairs(neighbours) do
-      self:scanAll(geolyzer, neighbour, scannedChunks)
+      self:scanAll(geolyzer, scanPos, neighbour, scannedChunks)
     end
   end
 end
