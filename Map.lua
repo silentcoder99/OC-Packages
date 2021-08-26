@@ -245,7 +245,11 @@ function Map:listChunks()
   local chunkFileIter = fs.list(absolutePath)
 
   return function()
-    local chunkFilename = chunkFileIter()
+    local chunkFilename = ""
+
+    repeat
+      chunkFilename = chunkFileIter()
+    until chunkFilename ~= metadataFile
 
     if not chunkFilename then
       return nil
