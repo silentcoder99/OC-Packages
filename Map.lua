@@ -15,6 +15,8 @@ function Map:new(chunkSize, filePath)
     numBlocks = 0,
     minBlock = Vec3:new(1000000, 1000000, 1000000),
     maxBlock = Vec3:new(-1000000, -1000000, -1000000),
+    scannedChunks = {},
+    unscannedChunks = {},
     cachedChunks = {},
     cacheSize = 40
   }
@@ -97,7 +99,10 @@ function Map:scanChunk(chunkPos, geolyzer, scanPos)
 
   local scanData = self:scanRawChunk(chunkPos, geolyzer, scanPos)
   if scanData == nil then
+    self.unscannedChunks[tostring(chunkPos)] = true
     return nil
+  else
+    self.scannedChunks[tostring(chunkPos)] = true
   end
 
   local solidBlocks = 0
@@ -166,21 +171,19 @@ function Map:adjacentChunks(chunkPos)
 end
 
 -- Scans all blocks connected to the geolyzer
-function Map:scanAll(geolyzer, scanPos, chunkPos, scannedChunks)
+function Map:scanAll(geolyzer, scanPos, chunkPos)
   local chunkPos = chunkPos or self:toChunkSpace(scanPos)
-  local scannedChunks = scannedChunks or {}
 
-  if scannedChunks[tostring(chunkPos)] then
+  if self.scannedChunks[tostring(chunkPos)] then
     return
   end
 
   local solidBlocks = self:scanChunk(chunkPos, geolyzer, scanPos)
-  scannedChunks[tostring(chunkPos)] = true
 
   if solidBlocks ~= nil and solidBlocks > 0 then
     local neighbours = self:adjacentChunks(chunkPos)
     for _, neighbour in pairs(neighbours) do
-      self:scanAll(geolyzer, scanPos, neighbour, scannedChunks)
+      self:scanAll(geolyzer, scanPos, neighbour)
     end
   end
 end
