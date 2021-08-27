@@ -310,6 +310,8 @@ function Map:loadMetadata()
   self.numBlocks = metadata.numBlocks
   self.minBlock = metadata.minBlock
   self.maxBlock = metadata.maxBlock
+  self.scannedChunks = metadata.scannedChunks
+  self.unscannedChunks = metadata.unscannedChunks
     
   setmetatable(self.chunkSize, Vec3)
   setmetatable(self.minBlock, Vec3)
