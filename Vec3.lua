@@ -1,5 +1,16 @@
+sides = require("sides")
+
 Vec3 = {}
 Vec3.__index = Vec3
+
+function Vec3:fromSide(side)
+  if side == sides.posx then return Vec3:new(1, 0, 0)
+  elseif side == sides.negx then return Vec3:new(-1, 0, 0)
+  elseif side == sides.posy then return Vec3:new(0, 1, 0)
+  elseif side == sides.negy then return Vec3:new(0, -1, 0)
+  elseif side == sides.posz then return Vec3:new(0, 0, 1)
+  elseif side == sides.negz then return Vec3:new(0, 0, -1) end
+end
 
 function Vec3:new(x, y, z)
   local obj = {
