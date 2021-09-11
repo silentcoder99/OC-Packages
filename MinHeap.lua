@@ -10,7 +10,7 @@ function MinHeap:new()
   return obj
 end
 
-MinHeap.__len = function()
+MinHeap.__len = function(self)
   return #self.nodes
 end
 
