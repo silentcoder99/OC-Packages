@@ -193,7 +193,6 @@ function Map:loadChunk(chunkPos)
   local file, ioError = io.open(chunkPath, "r")
 
   if not file then
-    print("Error reading chunk file", ioError)
     return nil
   end
 
