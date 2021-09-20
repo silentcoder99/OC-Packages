@@ -90,4 +90,8 @@ function MinHeap:peek()
   return top.value
 end
 
+function MinHeap:list()
+  return pairs(self.nodes)
+end
+
 return MinHeap
