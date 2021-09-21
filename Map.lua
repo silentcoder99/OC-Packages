@@ -246,6 +246,12 @@ function Map:getBlock(pos)
   return chunk[pos.x][pos.y][pos.z]
 end
 
+function Map:isEmpty(pos)
+  local block = self:getBlock(pos)
+
+  return block == 0
+end
+
 function Map:listChunks()
   local scriptPath = shell.resolve(".")
   local absolutePath = fs.concat(scriptPath, self.filePath)
