@@ -226,6 +226,10 @@ function Map:getCachedChunk(chunkPos)
 end
 
 function Map:getChunk(chunkPos)
+  if not self.scannedChunks[tostring(chunkPos)] then
+    return nil
+  end
+
   local chunk = self:getCachedChunk(chunkPos)
 
   if not chunk then
