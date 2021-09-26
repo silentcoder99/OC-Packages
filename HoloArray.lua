@@ -96,20 +96,12 @@ function HoloArray:showMap(map, colorFunc)
 
   local offset = ((resolution - size) / Vec3:new(2, 2, 2)):map(math.floor) + Vec3:new(1, 1, 1) - pos
 
-  for chunk in map:listChunks() do
-    for x, yList in pairs(chunk) do
-      for y, zList in pairs(yList) do
-        for z, block in pairs(zList) do
+  for x, y, z, block in map:listBlocks() do
+    local blockPos = Vec3:new(x, y, z)
+    local holoPos = blockPos + offset
 
-          local blockPos = Vec3:new(x, y, z)
-          local holoPos = blockPos + offset
-
-          local colorIndex = colorFunc(blockPos, block)
-          self:set(holoPos.x, holoPos.y, holoPos.z, colorIndex)
-
-        end
-      end
-    end
+    local colorIndex = colorFunc(blockPos, block)
+    self:set(holoPos.x, holoPos.y, holoPos.z, colorIndex)
   end
 end
 
