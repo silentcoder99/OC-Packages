@@ -284,6 +284,41 @@ function Map:listChunks()
   end
 end
 
+function Map:listBlocks()
+  local chunkIter = self:listChunks()
+  local chunk = chunkIter()
+
+  local x, yList = next(chunk)
+  local y, zList = next(yList)
+  local z, block = next(zList)
+
+  return function()
+    local currentBlock = block
+
+    z, block = next(zList, z)
+    if not z then
+      y, zList = next(yList, y)
+      if not y then
+        x, yList = next(chunk, x)
+        if not x then
+          chunk = chunkIter()
+          if not chunk then
+            return nil
+          end
+          x, yList = next(chunk)
+          y, zList = next(yList)
+          z, block = next(zList)
+        end
+        y, zList = next(yList)
+        z, block = next(zList)
+      end
+      z, block = next(zList)
+    end
+
+    return currentBlock
+  end
+end
+
 function Map:getSize()
   return self.maxBlock - self.minBlock + Vec3:new(1, 1, 1)
 end
