@@ -315,7 +315,7 @@ function Map:listBlocks()
       z, block = next(zList)
     end
 
-    return currentBlock
+    return x, y, z, currentBlock
   end
 end
 
