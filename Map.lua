@@ -294,6 +294,9 @@ function Map:listBlocks()
 
   return function()
     local currentBlock = block
+    local currX = x
+    local currY = y
+    local currZ = z
 
     z, block = next(zList, z)
     if not z then
@@ -315,7 +318,7 @@ function Map:listBlocks()
       z, block = next(zList)
     end
 
-    return x, y, z, currentBlock
+    return currX, currY, currZ, currentBlock
   end
 end
 
